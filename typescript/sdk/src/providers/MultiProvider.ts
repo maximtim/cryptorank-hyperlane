@@ -274,10 +274,20 @@ export class MultiProvider<MetaExt = {}> extends ChainMetadataManager<MetaExt> {
    * Get the transaction overrides for a given chain name, chain id, or domain id
    * @throws if chain's metadata has not been set
    */
-  getTransactionOverrides(
+  async getTransactionOverrides(
     chainNameOrId: ChainNameOrId,
-  ): Partial<providers.TransactionRequest> {
-    return this.getChainMetadata(chainNameOrId)?.transactionOverrides ?? {};
+  ): Promise<Partial<providers.TransactionRequest>> {
+    const signer = this.getSigner(chainNameOrId);
+
+    const nonce = await signer.getTransactionCount('latest');
+    const feeData = await signer.getFeeData();
+    const gasPrice = feeData.maxFeePerGas ?? feeData.gasPrice!;
+
+    const metadata =
+      this.getChainMetadata(chainNameOrId)?.transactionOverrides ?? {};
+    metadata['gasPrice'] = gasPrice.add(gasPrice.div(20)); // 5% buffer
+    metadata['nonce'] = nonce;
+    return metadata;
   }
 
   /**
@@ -290,7 +300,7 @@ export class MultiProvider<MetaExt = {}> extends ChainMetadataManager<MetaExt> {
     params: Parameters<F['deploy']>,
   ): Promise<Awaited<ReturnType<F['deploy']>>> {
     // setup contract factory
-    const overrides = this.getTransactionOverrides(chainNameOrId);
+    const overrides = await this.getTransactionOverrides(chainNameOrId);
     const signer = this.getSigner(chainNameOrId);
     const contractFactory = await factory.connect(signer);
 
@@ -341,7 +351,7 @@ export class MultiProvider<MetaExt = {}> extends ChainMetadataManager<MetaExt> {
     from?: string,
   ): Promise<providers.TransactionRequest> {
     const txFrom = from ? from : await this.getSignerAddress(chainNameOrId);
-    const overrides = this.getTransactionOverrides(chainNameOrId);
+    const overrides = await this.getTransactionOverrides(chainNameOrId);
     return {
       ...tx,
       from: txFrom,

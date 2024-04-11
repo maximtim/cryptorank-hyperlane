@@ -216,7 +216,7 @@ export class HyperlaneHookDeployer extends HyperlaneDeployer<
       addressToBytes32(opstackIsm.address),
       config.nativeBridge,
     ]);
-    const overrides = this.multiProvider.getTransactionOverrides(chain);
+    const overrides = await this.multiProvider.getTransactionOverrides(chain);
     // set authorized hook on opstack ism
     const authorizedHook = await opstackIsm.authorizedHook();
     if (authorizedHook === addressToBytes32(hook.address)) {
@@ -310,7 +310,7 @@ export class HyperlaneHookDeployer extends HyperlaneDeployer<
       }
     }
 
-    const overrides = this.multiProvider.getTransactionOverrides(chain);
+    const overrides = await this.multiProvider.getTransactionOverrides(chain);
     await this.runIfOwner(chain, routingHook, async () =>
       this.multiProvider.handleTx(
         chain,

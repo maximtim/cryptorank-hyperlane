@@ -77,7 +77,7 @@ export class HyperlaneIgpDeployer extends HyperlaneDeployer<
           chain,
           igp.setDestinationGasConfigs(
             gasParamsToSet,
-            this.multiProvider.getTransactionOverrides(chain),
+            await this.multiProvider.getTransactionOverrides(chain),
           ),
         ),
       );
@@ -127,7 +127,7 @@ export class HyperlaneIgpDeployer extends HyperlaneDeployer<
           chain,
           gasOracle.setRemoteGasDataConfigs(
             configsToSet,
-            this.multiProvider.getTransactionOverrides(chain),
+            await this.multiProvider.getTransactionOverrides(chain),
           ),
         ),
       );

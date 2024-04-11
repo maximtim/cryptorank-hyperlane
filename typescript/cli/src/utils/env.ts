@@ -1,4 +1,7 @@
+import * as dotenv from 'dotenv';
 import z from 'zod';
+
+dotenv.config();
 
 const envScheme = z.object({
   HYP_KEY: z.string().optional(),

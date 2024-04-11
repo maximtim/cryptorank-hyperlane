@@ -3,6 +3,7 @@ import { CommandModule } from 'yargs';
 import { log, logGray } from '../../logger.js';
 import { runKurtosisAgentDeploy } from '../deploy/agent.js';
 import { runCoreDeploy } from '../deploy/core.js';
+import { runCryptorankDeploy } from '../deploy/cryptorank.js';
 import { runWarpRouteDeploy } from '../deploy/warp.js';
 import { ENV } from '../utils/env.js';
 
@@ -26,6 +27,7 @@ export const deployCommand: CommandModule = {
       .command(coreCommand)
       .command(warpCommand)
       .command(agentCommand)
+      .command(cryptorankERC721Command)
       .version(false)
       .demandCommand(),
   handler: () => log('Command required'),
@@ -155,6 +157,42 @@ const warpCommand: CommandModule = {
       chainConfigPath,
       warpRouteDeploymentConfigPath,
       coreArtifactsPath,
+      outPath,
+      skipConfirmation,
+    });
+    process.exit(0);
+  },
+};
+
+const cryptorankERC721Command: CommandModule = {
+  command: 'crk721',
+  describe: 'Deploy Cryptorank ERC721 contracts',
+  builder: (yargs) =>
+    yargs.options({
+      // config: {
+      //   type: 'string',
+      //   description:
+      //     'A path to a JSON or YAML file with a warp route deployment config.',
+      //   default: './configs/warp-route-deployment.yaml',
+      // },
+      // core: coreArtifactsOption,
+      // chains: chainsCommandOption,
+      out: outDirCommandOption,
+      // key: keyCommandOption,
+      // yes: skipConfirmationOption,
+    }),
+  handler: async (argv: any) => {
+    const key: string = ENV.HYP_KEY ?? '';
+    // log('KEY: ', ENV);
+    log('KEY: ', key);
+    // log('KEY: ', process.env);
+    // const chainConfigPath: string = argv.chains;
+    // const warpRouteDeploymentConfigPath: string | undefined = argv.config;
+    // const coreArtifactsPath: string | undefined = argv.core;
+    const outPath: string = argv.out;
+    const skipConfirmation = false;
+    await runCryptorankDeploy({
+      key,
       outPath,
       skipConfirmation,
     });

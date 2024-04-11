@@ -115,7 +115,7 @@ export class HyperlaneCoreDeployer extends HyperlaneDeployer<
           defaultIsm,
           defaultHook.address,
           requiredHook.address,
-          this.multiProvider.getTransactionOverrides(chain),
+          await this.multiProvider.getTransactionOverrides(chain),
         ),
       );
     } catch (e: any) {
@@ -132,7 +132,7 @@ export class HyperlaneCoreDeployer extends HyperlaneDeployer<
 
       this.logger('Mailbox already initialized');
 
-      const overrides = this.multiProvider.getTransactionOverrides(chain);
+      const overrides = await this.multiProvider.getTransactionOverrides(chain);
       await this.configureHook(
         chain,
         mailbox,

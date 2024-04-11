@@ -412,6 +412,8 @@ export {
   HypERC20Factories,
   HypERC721Factories,
   TokenFactories,
+  CryptorankFactories,
+  cryptorankFactories,
 } from './token/contracts';
 export { HypERC20Deployer, HypERC721Deployer } from './token/deploy';
 export {

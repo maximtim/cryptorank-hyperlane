@@ -88,7 +88,7 @@ export abstract class HyperlaneRouterDeployer<
           this.router(contracts).enrollRemoteRouters(
             domains,
             addresses,
-            this.multiProvider.getTransactionOverrides(chain),
+            await this.multiProvider.getTransactionOverrides(chain),
           ),
         );
       });

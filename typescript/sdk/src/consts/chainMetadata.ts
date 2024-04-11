@@ -628,9 +628,9 @@ export const polygon: ChainMetadata = {
     },
   ],
   blocks: {
-    confirmations: 200,
+    confirmations: 5, // 200
     estimateBlockTime: 2,
-    reorgPeriod: 256,
+    reorgPeriod: 32, // 256
   },
   chainId: 137,
   displayName: 'Polygon',
@@ -639,14 +639,29 @@ export const polygon: ChainMetadata = {
   gnosisSafeTransactionServiceUrl:
     'https://safe-transaction-polygon.safe.global/',
   name: Chains.polygon,
-  nativeToken: etherToken,
+  nativeToken: maticToken,
   protocol: ProtocolType.Ethereum,
   rpcUrls: [
-    {
-      http: 'https://polygon-bor.publicnode.com',
-    },
     { http: 'https://polygon-rpc.com' },
-    { http: 'https://rpc.ankr.com/polygon' },
+    // { http: 'https://rpc.ankr.com/polygon' },
+    // {
+    //   http: 'https://polygon-bor-rpc.publicnode.com',
+    // },
+    {
+      http: 'https://polygon.meowrpc.com',
+    },
+    {
+      http: 'https://endpoints.omniatech.io/v1/matic/mainnet/public',
+    },
+    {
+      http: 'https://polygon.drpc.org',
+    },
+    // {
+    //   http: 'https://polygon-heimdall-rpc.publicnode.com:443',
+    // },
+    // {
+    //   http: 'https://polygon-bor.publicnode.com',
+    // },
   ],
 };
 

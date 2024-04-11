@@ -3,11 +3,12 @@
   "version": "3.9.0",
   "description": "A command-line utility for common Hyperlane operations",
   "dependencies": {
-    "@hyperlane-xyz/sdk": "3.9.0",
+    "@hyperlane-xyz/sdk": "link:./../sdk",
     "@hyperlane-xyz/utils": "3.9.0",
     "@inquirer/prompts": "^3.0.0",
     "bignumber.js": "^9.1.1",
     "chalk": "^5.3.0",
+    "dotenv": "^16.4.5",
     "ethers": "^5.7.2",
     "latest-version": "^8.0.0",
     "terminal-link": "^3.0.0",

@@ -233,7 +233,9 @@ export class HyperlaneIsmFactory extends HyperlaneApp<ProxyFactoryFactories> {
     logger: Debugger;
   }): Promise<IRoutingIsm> {
     const { destination, config, mailbox, existingIsmAddress } = params;
-    const overrides = this.multiProvider.getTransactionOverrides(destination);
+    const overrides = await this.multiProvider.getTransactionOverrides(
+      destination,
+    );
     const domainRoutingIsmFactory =
       this.getContracts(destination).domainRoutingIsmFactory;
     let routingIsm: DomainRoutingIsm | DefaultFallbackRoutingIsm;
@@ -443,7 +445,7 @@ export class HyperlaneIsmFactory extends HyperlaneApp<ProxyFactoryFactories> {
       logger(
         `Deploying new ${threshold} of ${values.length} address set to ${chain}`,
       );
-      const overrides = this.multiProvider.getTransactionOverrides(chain);
+      const overrides = await this.multiProvider.getTransactionOverrides(chain);
       const hash = await factory['deploy(address[],uint8)'](
         sorted,
         threshold,

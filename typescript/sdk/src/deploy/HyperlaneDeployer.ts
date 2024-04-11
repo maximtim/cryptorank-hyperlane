@@ -353,7 +353,7 @@ export abstract class HyperlaneDeployer<
 
     if (initializeArgs) {
       this.logger(`Initialize ${contractName} on ${chain}`);
-      const overrides = this.multiProvider.getTransactionOverrides(chain);
+      const overrides = await this.multiProvider.getTransactionOverrides(chain);
       const initTx = await contract.initialize(...initializeArgs, overrides);
       await this.multiProvider.handleTx(chain, initTx);
     }
@@ -414,7 +414,7 @@ export abstract class HyperlaneDeployer<
       return;
     }
 
-    const txOverrides = this.multiProvider.getTransactionOverrides(chain);
+    const txOverrides = await this.multiProvider.getTransactionOverrides(chain);
     this.logger(`Changing proxy admin`);
     await this.runIfAdmin(
       chain,
@@ -449,7 +449,7 @@ export abstract class HyperlaneDeployer<
       'initialize',
       initializeArgs,
     );
-    const overrides = this.multiProvider.getTransactionOverrides(chain);
+    const overrides = await this.multiProvider.getTransactionOverrides(chain);
     await this.runIfAdmin(
       chain,
       proxy,
@@ -660,7 +660,7 @@ export abstract class HyperlaneDeployer<
       const owner = config.ownerOverrides?.[contractName as K] ?? config.owner;
       if (!eqAddress(current, owner)) {
         this.logger('Current owner and config owner to not match');
-        const receipt = await this.runIfOwner(chain, ownable, () => {
+        const receipt = await this.runIfOwner(chain, ownable, async () => {
           this.logger(
             `Transferring ownership of ${contractName} to ${owner} on ${chain}`,
           );
@@ -668,7 +668,7 @@ export abstract class HyperlaneDeployer<
             chain,
             ownable.transferOwnership(
               owner,
-              this.multiProvider.getTransactionOverrides(chain),
+              await this.multiProvider.getTransactionOverrides(chain),
             ),
           );
         });
