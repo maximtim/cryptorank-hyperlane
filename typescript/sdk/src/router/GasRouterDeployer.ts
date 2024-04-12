@@ -45,11 +45,13 @@ export abstract class GasRouterDeployer<
         continue;
       }
 
+      const overrides = await this.multiProvider.getTransactionOverrides(chain);
       this.logger(`Set destination gas on ${chain} for ${remoteChains}`);
       await this.multiProvider.handleTx(
         chain,
         this.router(contracts)['setDestinationGas((uint32,uint256)[])'](
           remoteConfigs,
+          overrides,
         ),
       );
     }

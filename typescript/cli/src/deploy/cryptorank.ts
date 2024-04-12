@@ -118,8 +118,6 @@ async function runBuildConfigStep({
       return {
         type: 'erc721',
         mailbox: mergedContractAddrs[chainName].mailbox,
-        interchainSecurityModule:
-          mergedContractAddrs[chainName]?.interchainSecurityModule,
         owner,
         gas: 200_000,
         chainId: config.chainId,
