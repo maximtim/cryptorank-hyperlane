@@ -1,4 +1,4 @@
-import debug, { Debugger } from 'debug';
+import { Logger } from 'pino';
 
 import {
   Address,
@@ -9,23 +9,24 @@ import {
   convertToProtocolAddress,
   isValidAddress,
   isZeroishAddress,
+  rootLogger,
 } from '@hyperlane-xyz/utils';
 
-import { MultiProtocolProvider } from '../providers/MultiProtocolProvider';
+import { MultiProtocolProvider } from '../providers/MultiProtocolProvider.js';
 import {
   TransactionFeeEstimate,
   estimateTransactionFeeEthersV5ForGasUnits,
-} from '../providers/transactionFeeEstimators';
-import { IToken } from '../token/IToken';
-import { Token } from '../token/Token';
-import { TokenAmount } from '../token/TokenAmount';
-import { parseTokenConnectionId } from '../token/TokenConnection';
+} from '../providers/transactionFeeEstimators.js';
+import { IToken } from '../token/IToken.js';
+import { Token } from '../token/Token.js';
+import { TokenAmount } from '../token/TokenAmount.js';
+import { parseTokenConnectionId } from '../token/TokenConnection.js';
 import {
   TOKEN_COLLATERALIZED_STANDARDS,
   TOKEN_STANDARD_TO_PROVIDER_TYPE,
-} from '../token/TokenStandard';
-import { EVM_TRANSFER_REMOTE_GAS_ESTIMATE } from '../token/adapters/EvmTokenAdapter';
-import { ChainName, ChainNameOrId } from '../types';
+} from '../token/TokenStandard.js';
+import { EVM_TRANSFER_REMOTE_GAS_ESTIMATE } from '../token/adapters/EvmTokenAdapter.js';
+import { ChainName, ChainNameOrId } from '../types.js';
 
 import {
   FeeConstantConfig,
@@ -34,10 +35,10 @@ import {
   WarpCoreFeeEstimate,
   WarpTxCategory,
   WarpTypedTransaction,
-} from './types';
+} from './types.js';
 
 export interface WarpCoreOptions {
-  loggerName?: string;
+  logger?: Logger;
   localFeeConstants?: FeeConstantConfig;
   interchainFeeConstants?: FeeConstantConfig;
   routeBlacklist?: RouteBlacklist;
@@ -49,7 +50,7 @@ export class WarpCore {
   public readonly localFeeConstants: FeeConstantConfig;
   public readonly interchainFeeConstants: FeeConstantConfig;
   public readonly routeBlacklist: RouteBlacklist;
-  public readonly logger: Debugger;
+  public readonly logger: Logger;
 
   constructor(
     multiProvider: MultiProtocolProvider<{ mailbox?: Address }>,
@@ -61,7 +62,11 @@ export class WarpCore {
     this.localFeeConstants = options?.localFeeConstants || [];
     this.interchainFeeConstants = options?.interchainFeeConstants || [];
     this.routeBlacklist = options?.routeBlacklist || [];
-    this.logger = debug(options?.loggerName || 'hyperlane:WarpCore');
+    this.logger =
+      options?.logger ||
+      rootLogger.child({
+        module: 'WarpCore',
+      });
   }
 
   /**
@@ -119,7 +124,7 @@ export class WarpCore {
     originToken: IToken;
     destination: ChainNameOrId;
   }): Promise<TokenAmount> {
-    this.logger(`Fetching interchain transfer quote to ${destination}`);
+    this.logger.debug(`Fetching interchain transfer quote to ${destination}`);
     const { chainName: originName } = originToken;
     const destinationName = this.multiProvider.getChainName(destination);
 
@@ -158,7 +163,7 @@ export class WarpCore {
       igpToken = searchResult;
     }
 
-    this.logger(
+    this.logger.debug(
       `Quoted interchain transfer fee: ${gasAmount} ${igpToken.symbol}`,
     );
     return new TokenAmount(gasAmount, igpToken);
@@ -264,12 +269,12 @@ export class WarpCore {
     const hypAdapter = token.getHypAdapter(this.multiProvider, destinationName);
 
     if (await this.isApproveRequired({ originTokenAmount, owner: sender })) {
-      this.logger(`Approval required for transfer of ${token.symbol}`);
+      this.logger.info(`Approval required for transfer of ${token.symbol}`);
       const approveTxReq = await hypAdapter.populateApproveTx({
         weiAmountOrId: amount.toString(),
         recipient: token.addressOrDenom,
       });
-      this.logger(`Approval tx for ${token.symbol} populated`);
+      this.logger.debug(`Approval tx for ${token.symbol} populated`);
 
       const approveTx = {
         category: WarpTxCategory.Approval,
@@ -296,7 +301,7 @@ export class WarpCore {
         addressOrDenom: interchainFee.token.addressOrDenom,
       },
     });
-    this.logger(`Remote transfer tx for ${token.symbol} populated`);
+    this.logger.debug(`Remote transfer tx for ${token.symbol} populated`);
 
     const transferTx = {
       category: WarpTxCategory.Transfer,
@@ -322,7 +327,7 @@ export class WarpCore {
     sender: Address;
     senderPubKey?: HexString;
   }): Promise<WarpCoreFeeEstimate> {
-    this.logger('Fetching remote transfer fee estimates');
+    this.logger.debug('Fetching remote transfer fee estimates');
 
     // First get interchain gas quote (aka IGP quote)
     // Start with this because it's used in the local fee estimation
@@ -412,7 +417,7 @@ export class WarpCore {
   }): Promise<boolean> {
     const { token: originToken, amount } = originTokenAmount;
     const destinationName = this.multiProvider.getChainName(destination);
-    this.logger(
+    this.logger.debug(
       `Checking collateral for ${originToken.symbol} to ${destination}`,
     );
 
@@ -421,7 +426,9 @@ export class WarpCore {
     assert(destinationToken, `No connection found for ${destinationName}`);
 
     if (!TOKEN_COLLATERALIZED_STANDARDS.includes(destinationToken.standard)) {
-      this.logger(`${destinationToken.symbol} is not collateralized, skipping`);
+      this.logger.debug(
+        `${destinationToken.symbol} is not collateralized, skipping`,
+      );
       return true;
     }
 
@@ -436,7 +443,7 @@ export class WarpCore {
     );
 
     const isSufficient = BigInt(destinationBalanceInOriginDecimals) >= amount;
-    this.logger(
+    this.logger.debug(
       `${originTokenAmount.token.symbol} to ${destination} has ${
         isSufficient ? 'sufficient' : 'INSUFFICIENT'
       } collateral`,
@@ -461,7 +468,7 @@ export class WarpCore {
       token.addressOrDenom,
       amount,
     );
-    this.logger(
+    this.logger.info(
       `Approval is${isRequired ? '' : ' not'} required for transfer of ${
         token.symbol
       }`,
@@ -552,10 +559,10 @@ export class WarpCore {
     // Also ensure the address denom is correct if the dest protocol is Cosmos
     if (protocol === ProtocolType.Cosmos) {
       if (!bech32Prefix) {
-        this.logger(`No bech32 prefix found for chain ${destination}`);
+        this.logger.error(`No bech32 prefix found for chain ${destination}`);
         return { destination: 'Invalid chain data' };
       } else if (!recipient.startsWith(bech32Prefix)) {
-        this.logger(`Recipient prefix should be ${bech32Prefix}`);
+        this.logger.error(`Recipient prefix should be ${bech32Prefix}`);
         return { recipient: 'Invalid recipient prefix' };
       }
     }

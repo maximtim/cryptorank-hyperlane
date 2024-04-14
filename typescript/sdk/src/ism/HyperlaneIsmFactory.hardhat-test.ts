@@ -1,17 +1,18 @@
+/* eslint-disable no-console */
 import { expect } from 'chai';
-import { ethers } from 'hardhat';
+import hre from 'hardhat';
 
 import { DomainRoutingIsm } from '@hyperlane-xyz/core';
-import { Address, error } from '@hyperlane-xyz/utils';
+import { Address } from '@hyperlane-xyz/utils';
 
-import { TestChains } from '../consts/chains';
-import { TestCoreApp } from '../core/TestCoreApp';
-import { TestCoreDeployer } from '../core/TestCoreDeployer';
-import { HyperlaneProxyFactoryDeployer } from '../deploy/HyperlaneProxyFactoryDeployer';
-import { MultiProvider } from '../providers/MultiProvider';
-import { randomAddress, randomInt } from '../test/testUtils';
+import { TestChains } from '../consts/chains.js';
+import { TestCoreApp } from '../core/TestCoreApp.js';
+import { TestCoreDeployer } from '../core/TestCoreDeployer.js';
+import { HyperlaneProxyFactoryDeployer } from '../deploy/HyperlaneProxyFactoryDeployer.js';
+import { MultiProvider } from '../providers/MultiProvider.js';
+import { randomAddress, randomInt } from '../test/testUtils.js';
 
-import { HyperlaneIsmFactory } from './HyperlaneIsmFactory';
+import { HyperlaneIsmFactory } from './HyperlaneIsmFactory.js';
 import {
   AggregationIsmConfig,
   IsmConfig,
@@ -19,8 +20,8 @@ import {
   ModuleType,
   MultisigIsmConfig,
   RoutingIsmConfig,
-} from './types';
-import { moduleMatchesConfig } from './utils';
+} from './types.js';
+import { moduleMatchesConfig } from './utils.js';
 
 function randomModuleType(): ModuleType {
   const choices = [
@@ -82,7 +83,7 @@ describe('HyperlaneIsmFactory', async () => {
   const chain = 'test1';
 
   beforeEach(async () => {
-    const [signer] = await ethers.getSigners();
+    const [signer] = await hre.ethers.getSigners();
     multiProvider = MultiProvider.createTestMultiProvider({ signer });
     ismFactoryDeployer = new HyperlaneProxyFactoryDeployer(multiProvider);
     ismFactory = new HyperlaneIsmFactory(
@@ -130,8 +131,8 @@ describe('HyperlaneIsmFactory', async () => {
         const ism = await ismFactory.deploy({ destination: chain, config });
         ismAddress = ism.address;
       } catch (e) {
-        error('Failed to deploy random ism config', e);
-        error(JSON.stringify(config, null, 2));
+        console.error('Failed to deploy random ism config', e);
+        console.error(JSON.stringify(config, null, 2));
         process.exit(1);
       }
 
@@ -145,8 +146,8 @@ describe('HyperlaneIsmFactory', async () => {
         );
         expect(matches).to.be.true;
       } catch (e) {
-        error('Failed to match random ism config', e);
-        error(JSON.stringify(config, null, 2));
+        console.error('Failed to match random ism config', e);
+        console.error(JSON.stringify(config, null, 2));
         process.exit(1);
       }
     });

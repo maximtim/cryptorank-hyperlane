@@ -1,13 +1,11 @@
-import debug from 'debug';
-
 import { TestRecipient, TestRecipient__factory } from '@hyperlane-xyz/core';
-import { Address } from '@hyperlane-xyz/utils';
+import { Address, rootLogger } from '@hyperlane-xyz/utils';
 
-import { HyperlaneDeployer } from '../deploy/HyperlaneDeployer';
-import { ContractVerifier } from '../deploy/verify/ContractVerifier';
-import { MultiProvider } from '../providers/MultiProvider';
-import { MailboxClientConfig } from '../router/types';
-import { ChainName } from '../types';
+import { HyperlaneDeployer } from '../deploy/HyperlaneDeployer.js';
+import { ContractVerifier } from '../deploy/verify/ContractVerifier.js';
+import { MultiProvider } from '../providers/MultiProvider.js';
+import { MailboxClientConfig } from '../router/types.js';
+import { ChainName } from '../types.js';
 
 export type TestRecipientConfig = Pick<
   MailboxClientConfig,
@@ -35,7 +33,7 @@ export class TestRecipientDeployer extends HyperlaneDeployer<
     contractVerifier?: ContractVerifier,
   ) {
     super(multiProvider, testRecipientFactories, {
-      logger: debug('hyperlane:TestRecipientDeployer'),
+      logger: rootLogger.child({ module: 'TestRecipientDeployer' }),
       contractVerifier,
     });
   }
@@ -44,10 +42,10 @@ export class TestRecipientDeployer extends HyperlaneDeployer<
     chain: ChainName,
     config: TestRecipientConfig,
   ): Promise<TestRecipientContracts> {
-    this.logger(`Deploying TestRecipient on ${chain}`, config);
+    this.logger.debug(`Deploying TestRecipient on ${chain}`, config);
     const testRecipient = await this.deployContract(chain, 'testRecipient', []);
     if (config.interchainSecurityModule) {
-      this.logger(`Checking TestRecipient ISM on ${chain}`);
+      this.logger.debug(`Checking TestRecipient ISM on ${chain}`);
       await this.configureIsm(
         chain,
         testRecipient,
@@ -56,9 +54,7 @@ export class TestRecipientDeployer extends HyperlaneDeployer<
         (tr, ism) => tr.populateTransaction.setInterchainSecurityModule(ism),
       );
     } else {
-      this.logger(
-        `WARNING: No ISM config provided for TestRecipient on ${chain}`,
-      );
+      this.logger.warn(`No ISM config provided for TestRecipient on ${chain}`);
     }
     return {
       testRecipient,

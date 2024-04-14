@@ -1,14 +1,13 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "module": "Node16",
-    "moduleResolution": "Node16",
     "outDir": "./dist/",
     "rootDir": "."
   },
   "include": [
     "./cli.ts",
-    "./logger.ts",
+    "src/logger.ts",
+    "env.ts",
     "./src/**/*.ts",
     "./src/*.d.ts",
     "./examples/**/*.ts"

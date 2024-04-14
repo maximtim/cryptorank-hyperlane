@@ -1,9 +1,9 @@
-import { Debugger, debug } from 'debug';
+import { Logger } from 'pino';
 
-import { ProtocolType, exclude, pick } from '@hyperlane-xyz/utils';
+import { ProtocolType, exclude, pick, rootLogger } from '@hyperlane-xyz/utils';
 
-import { chainMetadata as defaultChainMetadata } from '../consts/chainMetadata';
-import { ChainMap, ChainName, ChainNameOrId } from '../types';
+import { chainMetadata as defaultChainMetadata } from '../consts/chainMetadata.js';
+import { ChainMap, ChainName, ChainNameOrId } from '../types.js';
 
 import {
   getExplorerAddressUrl,
@@ -11,16 +11,16 @@ import {
   getExplorerApiUrl,
   getExplorerBaseUrl,
   getExplorerTxUrl,
-} from './blockExplorer';
+} from './blockExplorer.js';
 import {
   ChainMetadata,
   ExplorerFamily,
   getDomainId,
   safeParseChainMetadata,
-} from './chainMetadataTypes';
+} from './chainMetadataTypes.js';
 
 export interface ChainMetadataManagerOptions {
-  loggerName?: string;
+  logger?: Logger;
 }
 
 /**
@@ -30,7 +30,7 @@ export interface ChainMetadataManagerOptions {
  */
 export class ChainMetadataManager<MetaExt = {}> {
   public readonly metadata: ChainMap<ChainMetadata<MetaExt>> = {};
-  public readonly logger: Debugger;
+  public readonly logger: Logger;
 
   /**
    * Create a new ChainMetadataManager with the given chainMetadata,
@@ -49,7 +49,11 @@ export class ChainMetadataManager<MetaExt = {}> {
         );
       this.addChain(cm);
     });
-    this.logger = debug(options?.loggerName || 'hyperlane:MetadataManager');
+    this.logger =
+      options?.logger ||
+      rootLogger.child({
+        module: 'MetadataManager',
+      });
   }
 
   /**
@@ -210,7 +214,9 @@ export class ChainMetadataManager<MetaExt = {}> {
    * Get the ids for all chains known to this MultiProvider
    */
   getKnownDomainIds(): number[] {
-    return this.getKnownChainNames().map(this.getDomainId);
+    return this.getKnownChainNames().map((chainName) =>
+      this.getDomainId(chainName),
+    );
   }
 
   /**
