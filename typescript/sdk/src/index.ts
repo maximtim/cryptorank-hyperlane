@@ -433,6 +433,8 @@ export {
   TokenFactories,
   CryptorankFactories,
   cryptorankFactories,
+  CryptorankContracts,
+  cryptorankContracts,
 } from './token/contracts.js';
 export { HypERC20Deployer, HypERC721Deployer } from './token/deploy.js';
 export {

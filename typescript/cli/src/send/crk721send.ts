@@ -4,10 +4,10 @@ import { Wallet } from 'ethers';
 import { MultiProvider } from '@hyperlane-xyz/sdk';
 import { addressToBytes32 } from '@hyperlane-xyz/utils';
 
-// import { addressToBytes32 } from '@hyperlane-xyz/utils';
-import { log } from '../../logger.js';
 import { testCrk721Configs } from '../deploy/cryptorank/erc721/config.js';
 import { cryptorankERC721Factories } from '../deploy/cryptorank/erc721/contracts.js';
+// import { addressToBytes32 } from '@hyperlane-xyz/utils';
+import { log } from '../logger.js';
 
 dotenv.config();
 
@@ -33,15 +33,15 @@ async function main() {
   console.info('Go');
 
   const bscContract = cryptorankERC721Factories.erc721
-    .attach('0x3577e4879DFcd45C5B17B7Af24cCd2CC7396a5f8')
+    .attach('0x93Ee5C1D22868478b35c51d37e560aEF46FD16B9')
     .connect(bsctestSigner);
 
   const mumContract = cryptorankERC721Factories.erc721
-    .attach('0x90f4AF35D2c8a33A2F6dF4BDd3bbDEeBaa017Cf8')
+    .attach('0x004Fc7c162A096eb5bb019CC83eDe75E45a6B950')
     .connect(mumbaiSigner);
 
   const destGas = await bscContract.destinationGas(mumbaiNetwork.chainId);
-  log(destGas.toNumber());
+  log(destGas.toNumber().toString());
 
   // const mailbox = await bscContract.mailbox();
   // log(mailbox);
@@ -63,7 +63,7 @@ async function main() {
   //   '0x069AfcBc2b655Ac8586F7fC6C60e45f4f4BBb6bB',
   //   1,
   // );
-  log(balance.toNumber(), ' ', token0.toNumber());
+  log(balance.toNumber().toString(), ' ', token0.toNumber());
 
   const tx = await bscContract['transferRemote(uint32,bytes32,uint256,string)'](
     mumbaiNetwork.chainId,

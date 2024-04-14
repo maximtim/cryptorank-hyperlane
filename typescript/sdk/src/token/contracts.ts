@@ -66,6 +66,13 @@ export type TokenFactories = HypERC20Factories | HypERC721Factories;
 
 export const cryptorankFactories = {
   ['erc721']: new Cryptorank__factory(),
+  ...proxiedFactories,
 };
 
 export type CryptorankFactories = typeof cryptorankFactories;
+
+export const cryptorankContracts = {
+  ['erc721']: 'Cryptorank',
+};
+
+export type CryptorankContracts = typeof cryptorankContracts;

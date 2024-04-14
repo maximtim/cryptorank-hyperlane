@@ -28,7 +28,7 @@ contract Cryptorank is ERC721EnumerableUpgradeable, TokenRouter {
         uint256 fee_,
         address owner_
     ) external initializer {
-        _transferOwnership(owner_);
+        _MailboxClient_initialize(address(0), address(0), owner_);
         __ERC721_init(_name, _symbol);
         fee = fee_;
 
@@ -110,7 +110,14 @@ contract Cryptorank is ERC721EnumerableUpgradeable, TokenRouter {
     ) external payable virtual returns (bytes32 messageId) {
         emit ReferralBridge(_referral, msg.sender);
         return
-            _transferRemote(_destination, _recipient, _amountOrId, msg.value);
+            _transferRemote(
+                _destination,
+                _recipient,
+                _amountOrId,
+                msg.value,
+                bytes(""),
+                address(0)
+            );
     }
 
     /**

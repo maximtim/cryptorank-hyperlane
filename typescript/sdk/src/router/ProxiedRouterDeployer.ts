@@ -91,9 +91,12 @@ export abstract class ProxiedRouterDeployer<
         this.logger.debug(
           `Transferring ownership of proxy admin to ${adminOwner}`,
         );
+        const overrides = await this.multiProvider.getTransactionOverrides(
+          chain,
+        );
         return this.multiProvider.handleTx(
           chain,
-          proxyAdmin.transferOwnership(adminOwner),
+          proxyAdmin.transferOwnership(adminOwner, overrides),
         );
       }
       return;

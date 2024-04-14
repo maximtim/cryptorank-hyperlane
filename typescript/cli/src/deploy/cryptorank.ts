@@ -13,9 +13,9 @@ import {
 } from '@hyperlane-xyz/sdk';
 import { Address, ProtocolType, objMap } from '@hyperlane-xyz/utils';
 
-import { log, logBlue, logGray, logGreen } from '../../logger.js';
 import { MINIMUM_WARP_DEPLOY_GAS } from '../consts.js';
 import { getContext, getMergedContractAddresses } from '../context.js';
+import { log, logBlue, logGray, logGreen } from '../logger.js';
 import { prepNewArtifactsFiles, writeJson } from '../utils/files.js';
 
 import {

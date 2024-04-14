@@ -19,8 +19,8 @@ export type CryptorankERC721Config = GasRouterConfig & CrkMetadata;
 export const prodConfigs = {};
 
 export const testCrk721Configs: CryptorankChainConfig = {
-  // bsctestnet: chainMetadata.bsctestnet,
-  // mumbai: chainMetadata.mumbai,
+  // bsctestnet: { ...chainMetadata.bsctestnet, fees: 1000 },
+  // mumbai: { ...chainMetadata.mumbai, fees: 1000 },
   polygon: { ...chainMetadata.polygon, fees: 1000 },
   bsc: { ...chainMetadata.bsc, fees: 1000 },
 };
