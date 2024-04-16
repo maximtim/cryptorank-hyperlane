@@ -11,6 +11,7 @@ export type CrkMetadata = {
   chainId: ChainId;
   name: string;
   symbol: string;
+  baseUri: string;
   fees: number;
 };
 export type CryptorankERC721Config = GasRouterConfig & CrkMetadata;
@@ -21,6 +22,7 @@ export const globalCrk721Config = {
   owner: '0xBE135bcF2B6F05e2AD5a3a227E15222Bfd7c0B22',
   name: 'Cryptorank Hyperlane NFT',
   symbol: 'hCRK',
+  baseUri: 'https://api.cryptorank.io/dedicated/web3/hyperlane/nft/',
 };
 
 export const chainCrk721Configs: CryptorankChainConfig = {

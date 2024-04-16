@@ -22,15 +22,17 @@ contract Cryptorank is ERC721EnumerableUpgradeable, TokenRouter {
     constructor(address _mailbox) TokenRouter(_mailbox) {}
 
     function initialize(
-        string memory _name,
-        string memory _symbol,
+        string memory name_,
+        string memory symbol_,
+        string memory baseURI_,
         uint256 chainId_,
         uint256 fee_,
         address owner_
     ) external initializer {
         _MailboxClient_initialize(address(0), address(0), owner_);
-        __ERC721_init(_name, _symbol);
+        __ERC721_init(name_, symbol_);
         fee = fee_;
+        baseUri = baseURI_;
 
         uint256 id = chainId_ * 10 ** 7 + 1;
         nextMintId = id + 1;

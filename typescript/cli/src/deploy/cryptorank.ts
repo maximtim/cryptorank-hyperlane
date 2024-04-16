@@ -96,6 +96,7 @@ export async function runPreflightChecks({
 }
 
 async function runBuildConfigStep({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   signer,
   coreArtifacts,
   chainConfig,
@@ -124,6 +125,7 @@ async function runBuildConfigStep({
         chainId: config.chainId,
         name: globalCrk721Config.name,
         symbol: globalCrk721Config.symbol,
+        baseUri: globalCrk721Config.baseUri,
         fees: config.fees,
         foreignDeployment: config.foreignDeployment,
       };

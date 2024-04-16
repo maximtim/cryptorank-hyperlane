@@ -36,7 +36,7 @@ export class CryptorankERC721Deployer extends GasRouterDeployer<
   }
 
   routerContractKey<K extends keyof CryptorankContracts>(
-    config: CryptorankERC721Config,
+    _config: CryptorankERC721Config,
   ): K {
     return 'erc721' as K;
   }
@@ -55,6 +55,7 @@ export class CryptorankERC721Deployer extends GasRouterDeployer<
     return [
       config.name,
       config.symbol,
+      config.baseUri,
       config.chainId,
       config.fees,
       config.owner,
@@ -65,19 +66,7 @@ export class CryptorankERC721Deployer extends GasRouterDeployer<
     return contracts.erc721;
   }
 
-  // Custom contract deployment logic can go here
-  // If no custom logic is needed, call deployContract for the router
   async deployContracts(chain: ChainName, config: CryptorankERC721Config) {
-    // const router = await this.deployContract(
-    //   chain,
-    //   'erc721',
-    //   [config.mailbox],
-    //   [config.name, config.symbol, config.chainId, config.fees, config.owner],
-    // );
-    // return {
-    //   erc721: router,
-    // };
-
     const { [this.routerContractKey(config)]: router } =
       await super.deployContracts(chain, config);
 
@@ -86,12 +75,6 @@ export class CryptorankERC721Deployer extends GasRouterDeployer<
   }
 
   async deploy(configMap: ChainMap<CryptorankERC721Config>) {
-    // const mergedConfig = objMap(configMap, (chain, config) => {
-    //   return {
-    //     ...config,
-    //   };
-    // }) as ChainMap<CryptorankERC721Config>;
-
     return super.deploy(configMap);
   }
 }
