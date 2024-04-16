@@ -4,7 +4,7 @@ import { Wallet } from 'ethers';
 import { MultiProvider } from '@hyperlane-xyz/sdk';
 import { addressToBytes32 } from '@hyperlane-xyz/utils';
 
-import { testCrk721Configs } from '../deploy/cryptorank/erc721/config.js';
+import { chainCrk721Configs } from '../deploy/cryptorank/erc721/config.js';
 import { cryptorankERC721Factories } from '../deploy/cryptorank/erc721/contracts.js';
 // import { addressToBytes32 } from '@hyperlane-xyz/utils';
 import { log } from '../logger.js';
@@ -22,7 +22,7 @@ async function main() {
   const signer = new Wallet(key);
 
   console.info('Preparing utilities');
-  const multiProvider = new MultiProvider(testCrk721Configs);
+  const multiProvider = new MultiProvider(chainCrk721Configs);
   multiProvider.setSharedSigner(signer);
 
   // const core = HyperlaneCore.fromEnvironment('testnet', multiProvider);

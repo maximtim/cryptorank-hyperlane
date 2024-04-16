@@ -15,10 +15,15 @@ export type CrkMetadata = {
 };
 export type CryptorankERC721Config = GasRouterConfig & CrkMetadata;
 
-// SET DESIRED NETWORKS HERE
-export const prodConfigs = {};
+export const globalCrk721Config = {
+  type: 'erc721',
+  gas: 200_000,
+  owner: '0xBE135bcF2B6F05e2AD5a3a227E15222Bfd7c0B22',
+  name: 'Cryptorank Hyperlane NFT',
+  symbol: 'hCRK',
+};
 
-export const testCrk721Configs: CryptorankChainConfig = {
+export const chainCrk721Configs: CryptorankChainConfig = {
   // bsctestnet: { ...chainMetadata.bsctestnet, fees: 1000 },
   // mumbai: { ...chainMetadata.mumbai, fees: 1000 },
   // polygon: {

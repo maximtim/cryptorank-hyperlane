@@ -21,7 +21,8 @@ import { prepNewArtifactsFiles, writeJson } from '../utils/files.js';
 import {
   CryptorankChainConfig,
   CryptorankERC721Config,
-  testCrk721Configs,
+  chainCrk721Configs,
+  globalCrk721Config,
 } from './cryptorank/erc721/config.js';
 import { CryptorankERC721Deployer } from './cryptorank/erc721/deployer.js';
 import { runPreflightChecksForChains } from './utils.js';
@@ -45,7 +46,7 @@ export async function runCryptorankDeploy({
   const configs = await runBuildConfigStep({
     coreArtifacts,
     signer,
-    chainConfig: testCrk721Configs,
+    chainConfig: chainCrk721Configs,
   });
 
   const deploymentParams = {
@@ -116,13 +117,13 @@ async function runBuildConfigStep({
     chainConfig,
     (chainName, config) => {
       return {
-        type: 'erc721',
+        type: globalCrk721Config.type,
         mailbox: mergedContractAddrs[chainName].mailbox,
-        owner: '0xBE135bcF2B6F05e2AD5a3a227E15222Bfd7c0B22',
-        gas: 200_000,
+        owner: globalCrk721Config.owner,
+        gas: globalCrk721Config.gas,
         chainId: config.chainId,
-        name: 'Cryptorank Hyperlane NFT',
-        symbol: 'hCRK',
+        name: globalCrk721Config.name,
+        symbol: globalCrk721Config.symbol,
         fees: config.fees,
         foreignDeployment: config.foreignDeployment,
       };
