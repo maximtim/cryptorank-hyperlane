@@ -12,6 +12,11 @@ import { log } from '../logger.js';
 dotenv.config();
 
 async function main() {
+  // const num = 0.44 * 1e18;
+  // console.log(num);
+  // console.log(1e1);
+  // console.log(1e2);
+
   console.info('Getting signer');
   const key = process.env.HYP_KEY ?? '';
   const signer = new Wallet(key);

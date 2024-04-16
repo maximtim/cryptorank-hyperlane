@@ -4,7 +4,7 @@ import {
   GasRouterConfig,
   chainMetadata,
 } from '@hyperlane-xyz/sdk';
-import { ChainId } from '@hyperlane-xyz/utils';
+import { Address, ChainId } from '@hyperlane-xyz/utils';
 
 export type CrkMetadata = {
   type: string;
@@ -21,8 +21,23 @@ export const prodConfigs = {};
 export const testCrk721Configs: CryptorankChainConfig = {
   // bsctestnet: { ...chainMetadata.bsctestnet, fees: 1000 },
   // mumbai: { ...chainMetadata.mumbai, fees: 1000 },
-  polygon: { ...chainMetadata.polygon, fees: 1000 },
-  bsc: { ...chainMetadata.bsc, fees: 1000 },
+  // polygon: {
+  //   ...chainMetadata.polygon,
+  //   foreignDeployment: '0xAddress',
+  //   fees: 1000,
+  // },
+  polygon: { ...chainMetadata.polygon, fees: 0.44 * 1e18 },
+  bsc: { ...chainMetadata.bsc, fees: 0.001184 * 1e18 },
+  arbitrum: { ...chainMetadata.arbitrum, fees: 0.00016 * 1e18 },
+  moonbeam: { ...chainMetadata.moonbeam, fees: 1.01976 * 1e18 },
+  optimism: { ...chainMetadata.optimism, fees: 0.00016 * 1e18 },
+  avalanche: { ...chainMetadata.avalanche, fees: 0.009744 * 1e18 },
+  celo: { ...chainMetadata.celo, fees: 0.5328 * 1e18 },
+  gnosis: { ...chainMetadata.gnosis, fees: 0.36 * 1e18 },
+  base: { ...chainMetadata.base, fees: 0.00016 * 1e18 },
+  scroll: { ...chainMetadata.scroll, fees: 0.00064 * 1e18 },
+  inevm: { ...chainMetadata.inevm, fees: 0.008 * 1e18 },
+  polygonzkevm: { ...chainMetadata.polygonzkevm, fees: 0.00016 * 1e18 },
   // Chains.arbitrum,
   // Chains.ancient8,
   // Chains.avalanche,
@@ -43,4 +58,6 @@ export const testCrk721Configs: CryptorankChainConfig = {
   // Chains.viction,
 };
 
-export type CryptorankChainConfig = ChainMap<ChainMetadata & { fees: number }>;
+export type CryptorankChainConfig = ChainMap<
+  ChainMetadata & { fees: number; foreignDeployment?: Address }
+>;

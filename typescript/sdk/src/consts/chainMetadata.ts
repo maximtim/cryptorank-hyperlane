@@ -587,7 +587,10 @@ export const optimism: ChainMetadata = {
   name: Chains.optimism,
   nativeToken: etherToken,
   protocol: ProtocolType.Ethereum,
-  rpcUrls: [{ http: 'https://mainnet.optimism.io' }],
+  rpcUrls: [
+    // { http: 'https://mainnet.optimism.io' },
+    { http: 'https://1rpc.io/op' },
+  ],
 };
 
 export const plumetestnet: ChainMetadata = {

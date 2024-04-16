@@ -105,7 +105,7 @@ async function runBuildConfigStep({
 }) {
   log('Assembling token configs');
 
-  const owner = await signer.getAddress();
+  // const owner = await signer.getAddress();
 
   const mergedContractAddrs = getMergedContractAddresses(
     coreArtifacts,
@@ -118,12 +118,13 @@ async function runBuildConfigStep({
       return {
         type: 'erc721',
         mailbox: mergedContractAddrs[chainName].mailbox,
-        owner,
+        owner: '0xBE135bcF2B6F05e2AD5a3a227E15222Bfd7c0B22',
         gas: 200_000,
         chainId: config.chainId,
-        name: 'CryptorankERC721',
-        symbol: 'CRK721',
+        name: 'Cryptorank Hyperlane NFT',
+        symbol: 'hCRK',
         fees: config.fees,
+        foreignDeployment: config.foreignDeployment,
       };
     },
   );
