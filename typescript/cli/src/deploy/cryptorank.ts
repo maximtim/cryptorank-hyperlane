@@ -121,6 +121,10 @@ async function runBuildConfigStep({
         type: globalCrk721Config.type,
         mailbox: mergedContractAddrs[chainName].mailbox,
         owner: globalCrk721Config.owner,
+        ownerOverrides: {
+          erc721: globalCrk721Config.ownerOverride,
+          proxyAdmin: globalCrk721Config.ownerOverride,
+        },
         gas: globalCrk721Config.gas,
         chainId: config.chainId,
         name: globalCrk721Config.name,
@@ -218,6 +222,7 @@ function writeWarpUiTokenConfig(
       standard: TokenStandard.ERC721,
       name: config.name,
       symbol: config.symbol,
+      logoURI: config.baseUri,
       decimals: 0,
       addressOrDenom:
         contract[configMap[chainName].type as keyof CryptorankFactories]

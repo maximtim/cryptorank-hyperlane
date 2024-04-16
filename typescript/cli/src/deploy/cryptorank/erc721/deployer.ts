@@ -67,11 +67,11 @@ export class CryptorankERC721Deployer extends GasRouterDeployer<
   }
 
   async deployContracts(chain: ChainName, config: CryptorankERC721Config) {
-    const { [this.routerContractKey(config)]: router } =
+    const { [this.routerContractKey(config)]: router, proxyAdmin } =
       await super.deployContracts(chain, config);
 
     await this.configureClient(chain, router as MailboxClient, config);
-    return { [config.type]: router } as any;
+    return { [config.type]: router, proxyAdmin } as any;
   }
 
   async deploy(configMap: ChainMap<CryptorankERC721Config>) {

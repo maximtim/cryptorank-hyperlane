@@ -228,7 +228,7 @@ export const bsctestnet: ChainMetadata = {
   nativeToken: bnbToken,
   protocol: ProtocolType.Ethereum,
   rpcUrls: [
-    { http: 'https://bsc-testnet.publicnode.com' },
+    { http: 'https://bsc-testnet-rpc.publicnode.com' },
     { http: 'https://bsc-testnet.blockpi.network/v1/rpc/public' },
   ],
 };
