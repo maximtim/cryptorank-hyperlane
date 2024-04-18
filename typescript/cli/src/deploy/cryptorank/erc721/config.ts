@@ -12,7 +12,7 @@ export type CrkMetadata = {
   name: string;
   symbol: string;
   baseUri: string;
-  fees: number;
+  fees: bigint;
 };
 export type CryptorankERC721Config = GasRouterConfig & CrkMetadata;
 
@@ -38,18 +38,18 @@ export const chainCrk721Configs: CryptorankChainConfig = {
   //   foreignDeployment: '0xAddress',
   //   fees: 1000,
   // },
-  polygon: { ...chainMetadata.polygon, fees: 0.44 * 1e18 },
-  bsc: { ...chainMetadata.bsc, fees: 0.001184 * 1e18 },
-  arbitrum: { ...chainMetadata.arbitrum, fees: 0.00016 * 1e18 },
-  moonbeam: { ...chainMetadata.moonbeam, fees: 1.01976 * 1e18 },
-  optimism: { ...chainMetadata.optimism, fees: 0.00016 * 1e18 },
-  avalanche: { ...chainMetadata.avalanche, fees: 0.009744 * 1e18 },
-  celo: { ...chainMetadata.celo, fees: 0.5328 * 1e18 },
-  gnosis: { ...chainMetadata.gnosis, fees: 0.36 * 1e18 },
-  base: { ...chainMetadata.base, fees: 0.00016 * 1e18 },
-  scroll: { ...chainMetadata.scroll, fees: 0.00064 * 1e18 },
-  inevm: { ...chainMetadata.inevm, fees: 0.008 * 1e18 },
-  polygonzkevm: { ...chainMetadata.polygonzkevm, fees: 0.00016 * 1e18 },
+  polygon: { ...chainMetadata.polygon, fees: 440000000000000000n },
+  bsc: { ...chainMetadata.bsc, fees: 1184000000000000n },
+  arbitrum: { ...chainMetadata.arbitrum, fees: 160000000000000n },
+  moonbeam: { ...chainMetadata.moonbeam, fees: 1019760000000000000n },
+  optimism: { ...chainMetadata.optimism, fees: 160000000000000n },
+  avalanche: { ...chainMetadata.avalanche, fees: 9744000000000000n },
+  celo: { ...chainMetadata.celo, fees: 532800000000000060n },
+  gnosis: { ...chainMetadata.gnosis, fees: 360000000000000000n },
+  base: { ...chainMetadata.base, fees: 160000000000000n },
+  scroll: { ...chainMetadata.scroll, fees: 640000000000000n },
+  inevm: { ...chainMetadata.inevm, fees: 8000000000000000n },
+  polygonzkevm: { ...chainMetadata.polygonzkevm, fees: 160000000000000n },
   // Chains.arbitrum,
   // Chains.ancient8,
   // Chains.avalanche,
@@ -71,5 +71,5 @@ export const chainCrk721Configs: CryptorankChainConfig = {
 };
 
 export type CryptorankChainConfig = ChainMap<
-  ChainMetadata & { fees: number; foreignDeployment?: Address }
+  ChainMetadata & { fees: bigint; foreignDeployment?: Address }
 >;
