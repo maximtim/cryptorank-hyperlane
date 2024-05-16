@@ -7,6 +7,7 @@ import {
   Signer,
   providers,
 } from 'ethers';
+import { shallowCopy } from 'ethers/lib/utils.js';
 import { Logger } from 'pino';
 
 import { Address, pick, rootLogger } from '@hyperlane-xyz/utils';
@@ -311,15 +312,30 @@ export class MultiProvider<MetaExt = {}> extends ChainMetadataManager<MetaExt> {
     const signer = this.getSigner(chainNameOrId);
     const contractFactory = await factory.connect(signer);
 
+    const overridesEstimate = shallowCopy(overrides);
+    this.logger.debug(overridesEstimate['gasLimit']);
+    overridesEstimate['gasLimit'] = 40_000_000;
+    this.logger.debug(overridesEstimate['gasLimit']);
+
     // estimate gas
-    const deployTx = contractFactory.getDeployTransaction(...params, overrides);
+    const deployTx = contractFactory.getDeployTransaction(
+      ...params,
+      overridesEstimate,
+    );
+
+    this.logger.debug('====== estimateGas ======');
+
     const gasEstimated = await signer.estimateGas(deployTx);
+
+    this.logger.debug(`====== gas estimated: ${gasEstimated} ======`);
 
     // deploy with 10% buffer on gas limit
     const contract = await contractFactory.deploy(...params, {
       ...overrides,
       gasLimit: gasEstimated.add(gasEstimated.div(10)), // 10% buffer
     });
+
+    this.logger.debug('====== deployed ======');
 
     // wait for deploy tx to be confirmed
     await this.handleTx(chainNameOrId, contract.deployTransaction);
