@@ -107,7 +107,14 @@ export const arbitrum: ChainMetadata = {
   name: Chains.arbitrum,
   nativeToken: etherToken,
   protocol: ProtocolType.Ethereum,
-  rpcUrls: [{ http: 'https://arb1.arbitrum.io/rpc' }],
+  rpcUrls: [
+    {
+      http: 'https://arb1.arbitrum.io/rpc',
+    },
+    {
+      http: 'https://1rpc.io/arb',
+    },
+  ],
   technicalStack: ChainTechnicalStack.ArbitrumNitro,
 };
 
@@ -473,6 +480,63 @@ export const mantapacific: ChainMetadata = {
   rpcUrls: [{ http: 'https://pacific-rpc.manta.network/http' }],
 };
 
+export const mode: ChainMetadata = {
+  blockExplorers: [
+    {
+      apiUrl: 'https://explorer.mode.network/api',
+      family: ExplorerFamily.Blockscout,
+      name: 'Mode Explorer',
+      url: 'https://explorer.mode.network',
+    },
+  ],
+  blocks: {
+    confirmations: 1,
+    estimateBlockTime: 2,
+    reorgPeriod: 1,
+  },
+  chainId: 34443,
+  displayName: 'Mode',
+  domainId: 34443,
+  gasCurrencyCoinGeckoId: 'ethereum',
+  name: Chains.mode,
+  nativeToken: etherToken,
+  protocol: ProtocolType.Ethereum,
+  rpcUrls: [{ http: 'https://1rpc.io/mode' }],
+  technicalStack: ChainTechnicalStack.Other,
+};
+
+export const blast: ChainMetadata = {
+  blockExplorers: [
+    {
+      apiUrl: 'https://api.blastscan.io/api',
+      family: ExplorerFamily.Etherscan,
+      name: 'Blast Explorer',
+      url: 'https://blastscan.io',
+    },
+    {
+      apiUrl:
+        'https://api.routescan.io/v2/network/mainnet/evm/81457/etherscan/api',
+      family: ExplorerFamily.Routescan,
+      name: 'Blast Explorer',
+      url: 'https://blastexplorer.io',
+    },
+  ],
+  blocks: {
+    confirmations: 1,
+    estimateBlockTime: 2,
+    reorgPeriod: 1,
+  },
+  chainId: 81457,
+  displayName: 'Blast',
+  domainId: 81457,
+  gasCurrencyCoinGeckoId: 'ethereum',
+  name: Chains.blast,
+  nativeToken: etherToken,
+  protocol: ProtocolType.Ethereum,
+  rpcUrls: [{ http: 'https://rpc.blast.io' }],
+  technicalStack: ChainTechnicalStack.Other,
+};
+
 export const moonbeam: ChainMetadata = {
   blockExplorers: [
     {
@@ -590,6 +654,7 @@ export const optimism: ChainMetadata = {
   rpcUrls: [
     // { http: 'https://mainnet.optimism.io' },
     { http: 'https://1rpc.io/op' },
+    { http: 'https://optimism.drpc.org' },
   ],
 };
 
@@ -997,6 +1062,7 @@ export const chainMetadata: ChainMap<ChainMetadata> = {
   arbitrum,
   avalanche,
   base,
+  blast,
   bsc,
   bsctestnet,
   celo,
@@ -1008,6 +1074,7 @@ export const chainMetadata: ChainMap<ChainMetadata> = {
   inevm,
   injective,
   mantapacific,
+  mode,
   moonbeam,
   nautilus,
   neutron,

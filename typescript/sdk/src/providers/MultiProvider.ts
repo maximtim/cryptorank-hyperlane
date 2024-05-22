@@ -313,14 +313,13 @@ export class MultiProvider<MetaExt = {}> extends ChainMetadataManager<MetaExt> {
     const contractFactory = await factory.connect(signer);
 
     const overridesEstimate = shallowCopy(overrides);
-    this.logger.debug(overridesEstimate['gasLimit']);
     overridesEstimate['gasLimit'] = 40_000_000;
     this.logger.debug(overridesEstimate['gasLimit']);
 
     // estimate gas
     const deployTx = contractFactory.getDeployTransaction(
       ...params,
-      overridesEstimate,
+      overrides, //overridesEstimate,
     );
 
     this.logger.debug('====== estimateGas ======');
