@@ -7,7 +7,7 @@ import {IERC721Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC7
 import {ERC721Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import {ERC721EnumerableUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
 
-contract Cryptorank is ERC721EnumerableUpgradeable, TokenRouter {
+contract CryptorankNFT is ERC721EnumerableUpgradeable, TokenRouter {
     error InsufficientPayment(uint256 fee, uint256 value);
 
     event ReferralMint(string referral, address sender, uint256 count);
@@ -17,7 +17,7 @@ contract Cryptorank is ERC721EnumerableUpgradeable, TokenRouter {
     uint256 public fee;
     uint256 public nextMintId;
 
-    mapping(uint256 => uint256) visited;
+    mapping(uint256 => uint256) visited; // 0x164 = 356
 
     constructor(address _mailbox) TokenRouter(_mailbox) {}
 
