@@ -14,11 +14,10 @@ import {
 } from '@hyperlane-xyz/sdk';
 import { rootLogger } from '@hyperlane-xyz/utils';
 
-// import { CryptorankFactories } from '../contracts.js';
-import { CryptorankERC721Config } from './config.js';
+import { CryptorankERC20Config } from './config.js';
 
-export class CryptorankERC721Deployer extends GasRouterDeployer<
-  CryptorankERC721Config,
+export class CryptorankERC20Deployer extends GasRouterDeployer<
+  CryptorankERC20Config,
   CryptorankFactories
 > {
   constructor(
@@ -26,47 +25,46 @@ export class CryptorankERC721Deployer extends GasRouterDeployer<
     readonly contractVerifier?: ContractVerifier,
   ) {
     super(multiProvider, cryptorankFactories, {
-      logger: rootLogger.child({ module: 'CryptorankERC721Deployer' }),
+      logger: rootLogger.child({ module: 'CryptorankERC20Deployer' }),
       contractVerifier,
     });
   }
 
-  routerContractName(config: CryptorankERC721Config): string {
+  routerContractName(config: CryptorankERC20Config): string {
     return cryptorankContracts[this.routerContractKey(config)];
   }
 
   routerContractKey<K extends keyof CryptorankContracts>(
-    _config: CryptorankERC721Config,
+    _config: CryptorankERC20Config,
   ): K {
-    return 'erc721' as K;
+    return 'erc20' as K;
   }
 
   async constructorArgs(
     _: ChainName,
-    config: CryptorankERC721Config,
+    config: CryptorankERC20Config,
   ): Promise<any> {
-    return [config.mailbox];
+    return [config.decimals, config.mailbox];
   }
 
   async initializeArgs(
     _: ChainName,
-    config: CryptorankERC721Config,
+    config: CryptorankERC20Config,
   ): Promise<any> {
     return [
+      config.initialSupply,
       config.name,
       config.symbol,
-      config.baseUri,
-      config.chainId,
       config.fees,
       config.owner,
     ];
   }
 
   router(contracts: HyperlaneContracts<CryptorankFactories>) {
-    return contracts.erc721;
+    return contracts.erc20;
   }
 
-  async deployContracts(chain: ChainName, config: CryptorankERC721Config) {
+  async deployContracts(chain: ChainName, config: CryptorankERC20Config) {
     const { [this.routerContractKey(config)]: router, proxyAdmin } =
       await super.deployContracts(chain, config);
 
@@ -74,7 +72,7 @@ export class CryptorankERC721Deployer extends GasRouterDeployer<
     return { [config.type]: router, proxyAdmin } as any;
   }
 
-  async deploy(configMap: ChainMap<CryptorankERC721Config>) {
+  async deploy(configMap: ChainMap<CryptorankERC20Config>) {
     return super.deploy(configMap);
   }
 }

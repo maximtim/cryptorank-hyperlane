@@ -2,7 +2,8 @@ import { CommandModule } from 'yargs';
 
 import { runKurtosisAgentDeploy } from '../deploy/agent.js';
 import { runCoreDeploy } from '../deploy/core.js';
-import { runCryptorankDeploy } from '../deploy/cryptorank.js';
+import { runCryptorank20Deploy } from '../deploy/cryptorank/cryptorank20.js';
+import { runCryptorank721Deploy } from '../deploy/cryptorank/cryptorank721.js';
 import { evaluateIfDryRunFailure, verifyAnvil } from '../deploy/dry-run.js';
 import { runWarpRouteDeploy } from '../deploy/warp.js';
 import { log, logGray } from '../logger.js';
@@ -39,6 +40,7 @@ export const deployCommand: CommandModule = {
       .command(warpCommand)
       .command(agentCommand)
       .command(cryptorankERC721Command)
+      .command(cryptorankERC20Command)
       .version(false)
       .demandCommand(),
   handler: () => log('Command required'),
@@ -193,7 +195,28 @@ const cryptorankERC721Command: CommandModule = {
     // const coreArtifactsPath: string | undefined = argv.core;
     const outPath: string = argv.out;
     const skipConfirmation = false;
-    await runCryptorankDeploy({
+    await runCryptorank721Deploy({
+      key,
+      outPath,
+      skipConfirmation,
+    });
+    process.exit(0);
+  },
+};
+
+const cryptorankERC20Command: CommandModule = {
+  command: 'crk20',
+  describe: 'Deploy Cryptorank ERC20 contracts',
+  builder: (yargs) =>
+    yargs.options({
+      out: outDirCommandOption,
+    }),
+  handler: async (argv: any) => {
+    const key: string = ENV.HYP_KEY ?? '';
+    log('KEY: ', key);
+    const outPath: string = argv.out;
+    const skipConfirmation = false;
+    await runCryptorank20Deploy({
       key,
       outPath,
       skipConfirmation,

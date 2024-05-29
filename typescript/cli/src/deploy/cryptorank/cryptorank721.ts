@@ -13,21 +13,21 @@ import {
 } from '@hyperlane-xyz/sdk';
 import { Address, ProtocolType, objMap } from '@hyperlane-xyz/utils';
 
-import { MINIMUM_WARP_DEPLOY_GAS } from '../consts.js';
-import { getContext, getMergedContractAddresses } from '../context.js';
-import { log, logBlue, logGray, logGreen } from '../logger.js';
-import { prepNewArtifactsFiles, writeJson } from '../utils/files.js';
+import { MINIMUM_WARP_DEPLOY_GAS } from '../../consts.js';
+import { getContext, getMergedContractAddresses } from '../../context.js';
+import { log, logBlue, logGray, logGreen } from '../../logger.js';
+import { prepNewArtifactsFiles, writeJson } from '../../utils/files.js';
+import { runPreflightChecksForChains } from '../utils.js';
 
 import {
-  CryptorankChainConfig,
+  Cryptorank721ChainConfig,
   CryptorankERC721Config,
   chainCrk721Configs,
   globalCrk721Config,
-} from './cryptorank/erc721/config.js';
-import { CryptorankERC721Deployer } from './cryptorank/erc721/deployer.js';
-import { runPreflightChecksForChains } from './utils.js';
+} from './erc721/config.js';
+import { CryptorankERC721Deployer } from './erc721/deployer.js';
 
-export async function runCryptorankDeploy({
+export async function runCryptorank721Deploy({
   key,
   outPath,
   skipConfirmation,
@@ -103,7 +103,7 @@ async function runBuildConfigStep({
 }: {
   signer: ethers.Signer;
   coreArtifacts?: HyperlaneContractsMap<any>;
-  chainConfig: CryptorankChainConfig;
+  chainConfig: Cryptorank721ChainConfig;
 }) {
   log('Assembling token configs');
 

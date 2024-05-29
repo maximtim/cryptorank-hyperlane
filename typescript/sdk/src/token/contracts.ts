@@ -1,5 +1,6 @@
 import {
-  Cryptorank__factory,
+  CryptorankFT__factory,
+  CryptorankNFT__factory,
   FastHypERC20Collateral__factory,
   FastHypERC20__factory,
   HypERC20CollateralVaultDeposit__factory,
@@ -65,14 +66,16 @@ export type HypERC721Factories = typeof hypERC721factories;
 export type TokenFactories = HypERC20Factories | HypERC721Factories;
 
 export const cryptorankFactories = {
-  ['erc721']: new Cryptorank__factory(),
+  ['erc721']: new CryptorankNFT__factory(),
+  ['erc20']: new CryptorankFT__factory(),
   ...proxiedFactories,
 };
 
 export type CryptorankFactories = typeof cryptorankFactories;
 
 export const cryptorankContracts = {
-  ['erc721']: 'Cryptorank',
+  ['erc721']: 'CryptorankNFT',
+  ['erc20']: 'CryptorankFT',
 };
 
 export type CryptorankContracts = typeof cryptorankContracts;

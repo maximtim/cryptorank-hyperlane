@@ -1,15 +1,10 @@
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity >=0.8.0;
 
-import {TokenRouter} from "./libs/TokenRouter.sol";
+import {TokenRouter} from "../token/libs/TokenRouter.sol";
 
 import {ERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 
-/**
- * @title Hyperlane ERC20 Token Router that extends ERC20 with remote transfer functionality.
- * @author Abacus Works
- * @dev Supply on each chain is not constant but the aggregate supply across all chains is.
- */
 contract CryptorankFT is ERC20Upgradeable, TokenRouter {
     error InsufficientPayment(uint256 fee, uint256 value);
 
@@ -27,8 +22,8 @@ contract CryptorankFT is ERC20Upgradeable, TokenRouter {
     }
 
     /**
-     * @notice Initializes the Hyperlane router, ERC20 metadata, and mints initial supply to deployer.
-     * @param _totalSupply The initial supply of the token.
+     * @notice Initializes the Hyperlane router, ERC20 metadata, and mints initial supply to owner.
+     * @param _initialSupply The initial supply of the token.
      * @param _name The name of the token.
      * @param _symbol The symbol of the token.
      */
