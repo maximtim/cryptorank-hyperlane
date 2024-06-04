@@ -55,7 +55,8 @@ export class CryptorankERC20Deployer extends GasRouterDeployer<
       config.initialSupply,
       config.name,
       config.symbol,
-      config.fees,
+      config.mintFee,
+      config.bridgeFee,
       config.owner,
     ];
   }

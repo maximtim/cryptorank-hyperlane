@@ -12,7 +12,8 @@ export type Crk20Metadata = {
   name: string;
   symbol: string;
   decimals: number;
-  fees: bigint;
+  mintFee: bigint;
+  bridgeFee: bigint;
 };
 export type CryptorankERC20Config = GasRouterConfig & Crk20Metadata;
 
@@ -39,10 +40,10 @@ export const chainCrk20Configs: Cryptorank20ChainConfig = {
   //   foreignDeployment: '0xAddress',
   //   fees: 1000,
   // },
-  // polygon: { ...chainMetadata.polygon, fees: 4400n },
-  bsc: { ...chainMetadata.bsc, fees: 1184n },
+  // polygon: { ...chainMetadata.polygon, mintFee: 4400n, bridgeFee: 4400n },
+  bsc: { ...chainMetadata.bsc, mintFee: 4400n, bridgeFee: 4400n },
   // arbitrum: { ...chainMetadata.arbitrum, fees: 160000000000000n },
-  inevm: { ...chainMetadata.inevm, fees: 8000n },
+  // inevm: { ...chainMetadata.inevm, fees: 8000n },
   // optimism: { ...chainMetadata.optimism, fees: 160000000000000n },
   // moonbeam: { ...chainMetadata.moonbeam, fees: 1019760000000000000n },
   // avalanche: { ...chainMetadata.avalanche, fees: 9744000000000000n },
@@ -75,5 +76,9 @@ export const chainCrk20Configs: Cryptorank20ChainConfig = {
 };
 
 export type Cryptorank20ChainConfig = ChainMap<
-  ChainMetadata & { fees: bigint; foreignDeployment?: Address }
+  ChainMetadata & {
+    mintFee: bigint;
+    bridgeFee: bigint;
+    foreignDeployment?: Address;
+  }
 >;

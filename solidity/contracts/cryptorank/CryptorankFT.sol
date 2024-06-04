@@ -14,7 +14,8 @@ contract CryptorankFT is ERC20Upgradeable, TokenRouter {
     uint8 private immutable _decimals;
 
     /// @notice Fee per 1 token (with decimals)
-    uint256 public fee;
+    uint256 public mintFee;
+    uint256 public bridgeFee;
     mapping(address => bool) public visited;
 
     constructor(uint8 __decimals, address _mailbox) TokenRouter(_mailbox) {
@@ -31,23 +32,26 @@ contract CryptorankFT is ERC20Upgradeable, TokenRouter {
         uint256 _initialSupply,
         string memory _name,
         string memory _symbol,
-        uint256 _fee,
+        uint256 _mintFee,
+        uint256 _bridgeFee,
         address _owner
     ) external initializer {
         // Initialize ERC20 metadata
         _MailboxClient_initialize(address(0), address(0), _owner);
         __ERC20_init(_name, _symbol);
-        fee = _fee;
+        mintFee = _mintFee;
+        bridgeFee = _bridgeFee;
 
         _mint(_owner, _initialSupply);
     }
 
-    function setFee(uint256 _fee) external onlyOwner {
-        fee = _fee;
+    function setFees(uint256 _mintFee, uint256 _bridgeFee) external onlyOwner {
+        mintFee = _mintFee;
+        bridgeFee = _bridgeFee;
     }
 
     function mint(string calldata _referral, uint256 _amount) external payable {
-        uint256 totalFee_ = (fee * _amount) / _decimals;
+        uint256 totalFee_ = (mintFee * _amount) / _decimals;
         if (msg.value < totalFee_)
             revert InsufficientPayment(totalFee_, msg.value);
 
@@ -77,7 +81,7 @@ contract CryptorankFT is ERC20Upgradeable, TokenRouter {
                 _destination,
                 _recipient,
                 _amount,
-                msg.value,
+                msg.value - bridgeFee,
                 bytes(""),
                 address(0)
             );

@@ -131,7 +131,8 @@ async function runBuildConfigStep({
         decimals: globalCrk20Config.decimals,
         name: globalCrk20Config.name,
         symbol: globalCrk20Config.symbol,
-        fees: config.fees,
+        mintFee: config.mintFee,
+        bridgeFee: config.bridgeFee,
         foreignDeployment: config.foreignDeployment,
       };
     },
