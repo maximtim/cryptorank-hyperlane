@@ -1050,6 +1050,76 @@ export const viction: ChainMetadata = {
   ],
 };
 
+export const zetachain: ChainMetadata = {
+  blockExplorers: [
+    {
+      apiUrl: 'https://explorer.zetachain.com',
+      family: ExplorerFamily.Other,
+      name: 'ZetaScan',
+      url: 'https://explorer.zetachain.com',
+    },
+  ],
+  blocks: {
+    confirmations: 1,
+    estimateBlockTime: 6,
+    reorgPeriod: 0,
+  },
+  chainId: 7000,
+  displayName: 'ZetaChain',
+  domainId: 7000,
+  gasCurrencyCoinGeckoId: 'zetachain',
+  name: Chains.zetachain,
+  nativeToken: {
+    decimals: 18,
+    name: 'ZetaChain',
+    symbol: 'ZETA',
+  },
+  protocol: ProtocolType.Ethereum,
+  rpcUrls: [
+    {
+      http: 'https://zetachain-evm.blockpi.network/v1/rpc/public',
+    },
+    {
+      http: 'https://zetachain-athens-evm.blockpi.network/v1/rpc/public',
+    },
+    {
+      http: 'https://zetachain-mainnet-archive.allthatnode.com:8545',
+    },
+  ],
+};
+
+export const redstone: ChainMetadata = {
+  blockExplorers: [
+    {
+      apiUrl: 'https://explorer.redstone.xyz/api',
+      family: ExplorerFamily.Blockscout,
+      name: 'Redstone Explorer',
+      url: 'https://explorer.redstone.xyz',
+    },
+  ],
+  blocks: {
+    confirmations: 1,
+    estimateBlockTime: 2,
+    reorgPeriod: 0,
+  },
+  chainId: 690,
+  displayName: 'Redstone',
+  domainId: 690,
+  gasCurrencyCoinGeckoId: 'ethereum',
+  name: Chains.redstone,
+  nativeToken: {
+    decimals: 18,
+    name: 'Ether',
+    symbol: 'ETH',
+  },
+  protocol: ProtocolType.Ethereum,
+  rpcUrls: [
+    {
+      http: 'https://rpc.redstonechain.com',
+    },
+  ],
+};
+
 /**
  * Collection maps
  *
@@ -1083,6 +1153,7 @@ export const chainMetadata: ChainMap<ChainMetadata> = {
   polygon,
   polygonzkevm,
   proteustestnet,
+  redstone,
   scroll,
   scrollsepolia,
   sepolia,
@@ -1093,6 +1164,7 @@ export const chainMetadata: ChainMap<ChainMetadata> = {
   test2,
   test3,
   viction,
+  zetachain,
 };
 
 export const chainIdToMetadata = Object.values(chainMetadata).reduce<
