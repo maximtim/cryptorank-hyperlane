@@ -421,7 +421,7 @@ export const inevm: ChainMetadata = {
     symbol: 'INJ',
   },
   protocol: ProtocolType.Ethereum,
-  rpcUrls: [{ http: 'https://inevm.calderachain.xyz/http' }],
+  rpcUrls: [{ http: 'https://mainnet.rpc.inevm.com/http' }],
 };
 
 export const injective: ChainMetadata = {
