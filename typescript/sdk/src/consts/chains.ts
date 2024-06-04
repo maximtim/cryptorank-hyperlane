@@ -28,6 +28,7 @@ export enum Chains {
   polygon = 'polygon',
   polygonzkevm = 'polygonzkevm',
   proteustestnet = 'proteustestnet',
+  redstone = 'redstone',
   scroll = 'scroll',
   scrollsepolia = 'scrollsepolia',
   sepolia = 'sepolia',
@@ -36,6 +37,7 @@ export enum Chains {
   solanatestnet = 'solanatestnet',
   eclipsetestnet = 'eclipsetestnet',
   viction = 'viction',
+  zetachain = 'zetachain',
   test1 = 'test1',
   test2 = 'test2',
   test3 = 'test3',
@@ -75,6 +77,8 @@ export const Mainnets: Array<CoreChainName> = [
   Chains.injective,
   Chains.inevm,
   Chains.viction,
+  Chains.zetachain,
+  Chains.redstone,
   // Chains.solana,
 ];
 
