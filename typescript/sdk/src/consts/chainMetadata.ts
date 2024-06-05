@@ -704,7 +704,7 @@ export const polygon: ChainMetadata = {
     },
   ],
   blocks: {
-    confirmations: 5, // 200
+    confirmations: 1, // 200
     estimateBlockTime: 2,
     reorgPeriod: 32, // 256
   },
@@ -718,8 +718,8 @@ export const polygon: ChainMetadata = {
   nativeToken: maticToken,
   protocol: ProtocolType.Ethereum,
   rpcUrls: [
+    { http: 'https://rpc.ankr.com/polygon' },
     { http: 'https://polygon-rpc.com' },
-    // { http: 'https://rpc.ankr.com/polygon' },
     // {
     //   http: 'https://polygon-bor-rpc.publicnode.com',
     // },
@@ -739,6 +739,9 @@ export const polygon: ChainMetadata = {
     //   http: 'https://polygon-bor.publicnode.com',
     // },
   ],
+  transactionOverrides: {
+    gasPricePercent: 110,
+  },
 };
 
 export const polygonzkevm: ChainMetadata = {
