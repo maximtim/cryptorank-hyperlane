@@ -1,5 +1,10 @@
 // import { ethers } from 'ethers';
-import { MailboxClient } from '@hyperlane-xyz/core';
+import { Contract } from 'ethers';
+
+import {
+  ITransparentUpgradeableProxy,
+  MailboxClient,
+} from '@hyperlane-xyz/core';
 import {
   ChainMap,
   ChainName,
@@ -75,5 +80,19 @@ export class CryptorankERC20Deployer extends GasRouterDeployer<
 
   async deploy(configMap: ChainMap<CryptorankERC20Config>) {
     return super.deploy(configMap);
+  }
+
+  async upgradeAndInitialize<C extends Contract>(
+    chain: string,
+    proxy: ITransparentUpgradeableProxy,
+    implementation: C,
+    initializeArgs: Parameters<C['initialize']>,
+  ): Promise<void> {
+    return super.upgradeAndInitialize(
+      chain,
+      proxy,
+      implementation,
+      initializeArgs,
+    );
   }
 }

@@ -12,6 +12,7 @@ contract CryptorankFT is ERC20Upgradeable, TokenRouter {
     event ReferralBridge(string referral, address sender, uint256 amount);
 
     uint8 private immutable _decimals;
+    uint256 public immutable DECIMALS_UNIT;
 
     /// @notice Fee per 1 token (with decimals)
     uint256 public mintFee;
@@ -20,6 +21,7 @@ contract CryptorankFT is ERC20Upgradeable, TokenRouter {
 
     constructor(uint8 __decimals, address _mailbox) TokenRouter(_mailbox) {
         _decimals = __decimals;
+        DECIMALS_UNIT = 10 ** _decimals;
     }
 
     /**
@@ -51,7 +53,7 @@ contract CryptorankFT is ERC20Upgradeable, TokenRouter {
     }
 
     function mint(string calldata _referral, uint256 _amount) external payable {
-        uint256 totalFee_ = (mintFee * _amount) / _decimals;
+        uint256 totalFee_ = (mintFee * _amount) / DECIMALS_UNIT;
         if (msg.value < totalFee_)
             revert InsufficientPayment(totalFee_, msg.value);
 
