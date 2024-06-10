@@ -95,4 +95,12 @@ export class CryptorankERC20Deployer extends GasRouterDeployer<
       initializeArgs,
     );
   }
+
+  async upgrade<C extends Contract>(
+    chain: string,
+    proxy: ITransparentUpgradeableProxy,
+    implementation: C,
+  ): Promise<void> {
+    return super.upgrade(chain, proxy, implementation);
+  }
 }

@@ -488,7 +488,10 @@ export abstract class HyperlaneDeployer<
     implementation: C,
     initializeArgs: Parameters<C['initialize']>,
   ): Promise<void> {
-    const current = await proxy.callStatic.implementation();
+    const current = await proxyImplementation(
+      this.multiProvider.getProvider(chain),
+      proxy.address,
+    );
     if (eqAddress(implementation.address, current)) {
       this.logger.debug(`Implementation set correctly, skipping upgrade`);
       return;
@@ -517,6 +520,38 @@ export abstract class HyperlaneDeployer<
             initData,
             overrides,
           ),
+        ),
+    );
+  }
+
+  protected async upgrade<C extends ethers.Contract>(
+    chain: ChainName,
+    proxy: ITransparentUpgradeableProxy,
+    implementation: C,
+  ): Promise<void> {
+    const current = await proxyImplementation(
+      this.multiProvider.getProvider(chain),
+      proxy.address,
+    );
+    if (eqAddress(implementation.address, current)) {
+      this.logger.debug(`Implementation set correctly, skipping upgrade`);
+      return;
+    }
+
+    this.logger.debug(`Upgrading implementation`);
+    const overrides = await this.multiProvider.getTransactionOverrides(chain);
+    await this.runIfAdmin(
+      chain,
+      proxy,
+      () =>
+        this.multiProvider.handleTx(
+          chain,
+          proxy.upgradeTo(implementation.address, overrides),
+        ),
+      (proxyAdmin: ProxyAdmin) =>
+        this.multiProvider.handleTx(
+          chain,
+          proxyAdmin.upgrade(proxy.address, implementation.address, overrides),
         ),
     );
   }

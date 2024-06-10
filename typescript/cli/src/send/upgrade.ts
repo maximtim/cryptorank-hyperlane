@@ -62,25 +62,28 @@ async function main() {
 
   const deployer = new CryptorankERC20Deployer(multiProvider);
 
+  console.info();
+  console.info('Start');
+  console.info();
+
   for (const [chainName, config] of Object.entries(configMap)) {
+    console.info('Deploy new implementation on: ', chainName);
     const implementation = await deployer.deployContractWithName(
       chainName,
       'erc20',
       cryptorankContracts.erc20,
       await deployer.constructorArgs(chainName, config),
     );
+    console.info('Deploy done on: ', chainName);
 
     const proxy = ITransparentUpgradeableProxy__factory.connect(
       config.foreignDeployment!,
-      signer,
+      multiProvider.getSigner(chainName),
     );
 
-    await deployer.upgradeAndInitialize(
-      chainName,
-      proxy,
-      implementation,
-      await deployer.initializeArgs(chainName, config),
-    );
+    console.info('Upgrade start on: ', chainName);
+    await deployer.upgrade(chainName, proxy, implementation);
+    console.info('Upgrade done on: ', chainName);
   }
 }
 
