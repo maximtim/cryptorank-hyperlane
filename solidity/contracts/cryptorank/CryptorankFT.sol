@@ -89,6 +89,25 @@ contract CryptorankFT is ERC20Upgradeable, TokenRouter {
             );
     }
 
+    /**
+     * @inheritdoc TokenRouter
+     */
+    function transferRemote(
+        uint32 _destination,
+        bytes32 _recipient,
+        uint256 _amount
+    ) public payable virtual override returns (bytes32 messageId) {
+        return
+            _transferRemote(
+                _destination,
+                _recipient,
+                _amount,
+                msg.value - bridgeFee,
+                bytes(""),
+                address(0)
+            );
+    }
+
     function withdraw() public onlyOwner {
         (bool success, ) = payable(msg.sender).call{
             value: address(this).balance

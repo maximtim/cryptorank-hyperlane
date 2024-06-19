@@ -68,36 +68,6 @@ abstract contract TokenRouter is GasRouter {
     }
 
     /**
-     * @notice Transfers `_amountOrId` token to `_recipient` on `_destination` domain with a specified hook
-     * @dev Delegates transfer logic to `_transferFromSender` implementation.
-     * @dev The metadata is the token metadata, and is DIFFERENT than the hook metadata.
-     * @dev Emits `SentTransferRemote` event on the origin chain.
-     * @param _destination The identifier of the destination chain.
-     * @param _recipient The address of the recipient on the destination chain.
-     * @param _amountOrId The amount or identifier of tokens to be sent to the remote recipient.
-     * @param _hookMetadata The metadata passed into the hook
-     * @param _hook The post dispatch hook to be called by the Mailbox
-     * @return messageId The identifier of the dispatched message.
-     */
-    function transferRemote(
-        uint32 _destination,
-        bytes32 _recipient,
-        uint256 _amountOrId,
-        bytes calldata _hookMetadata,
-        address _hook
-    ) external payable virtual returns (bytes32 messageId) {
-        return
-            _transferRemote(
-                _destination,
-                _recipient,
-                _amountOrId,
-                msg.value,
-                _hookMetadata,
-                _hook
-            );
-    }
-
-    /**
      * @notice Transfers `_amountOrId` token to `_recipient` on `_destination` domain.
      * @dev Delegates transfer logic to `_transferFromSender` implementation.
      * @dev The metadata is the token metadata, and is DIFFERENT than the hook metadata.
