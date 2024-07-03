@@ -5,6 +5,7 @@ import {TokenRouter} from "../token/libs/TokenRouter.sol";
 
 import {ERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 
+// бридж искусственного ERC20 токена
 contract CryptorankFT is ERC20Upgradeable, TokenRouter {
     error InsufficientPayment(uint256 fee, uint256 value);
 
@@ -21,7 +22,7 @@ contract CryptorankFT is ERC20Upgradeable, TokenRouter {
 
     constructor(uint8 __decimals, address _mailbox) TokenRouter(_mailbox) {
         _decimals = __decimals;
-        DECIMALS_UNIT = 10 ** _decimals;
+        DECIMALS_UNIT = 10 ** _decimals; // precomputed optimization
     }
 
     /**
@@ -39,12 +40,12 @@ contract CryptorankFT is ERC20Upgradeable, TokenRouter {
         address _owner
     ) external initializer {
         // Initialize ERC20 metadata
-        _MailboxClient_initialize(address(0), address(0), _owner);
+        _MailboxClient_initialize(address(0), address(0), _owner); // это значит что hook и ism будут дефолтные
         __ERC20_init(_name, _symbol);
         mintFee = _mintFee;
         bridgeFee = _bridgeFee;
 
-        _mint(_owner, _initialSupply);
+        _mint(_owner, _initialSupply); // тестовые токены
     }
 
     function setFees(uint256 _mintFee, uint256 _bridgeFee) external onlyOwner {
@@ -53,7 +54,7 @@ contract CryptorankFT is ERC20Upgradeable, TokenRouter {
     }
 
     function mint(string calldata _referral, uint256 _amount) external payable {
-        uint256 totalFee_ = (mintFee * _amount) / DECIMALS_UNIT;
+        uint256 totalFee_ = (mintFee * _amount) / DECIMALS_UNIT; // линейно пропорциональная комиссия
         if (msg.value < totalFee_)
             revert InsufficientPayment(totalFee_, msg.value);
 
@@ -83,15 +84,16 @@ contract CryptorankFT is ERC20Upgradeable, TokenRouter {
                 _destination,
                 _recipient,
                 _amount,
-                msg.value - bridgeFee,
+                msg.value - bridgeFee, // забираем комиссию
                 bytes(""),
-                address(0)
+                address(0) // используется дефолтный хук
             );
     }
 
     /**
      * @inheritdoc TokenRouter
      */
+    // та же история с оверрайдами бесполезных функций, что и в native. мне тогда сказали что можно оставить, и я забил
     function transferRemote(
         uint32 _destination,
         bytes32 _recipient,
@@ -135,6 +137,7 @@ contract CryptorankFT is ERC20Upgradeable, TokenRouter {
         address _account,
         uint256 _amount
     ) internal virtual override {
+        // флаг посещения сети для данного юзера, просили добавить для статы
         if (visited[_account] == false) visited[_account] = true;
         super._mint(_account, _amount);
     }

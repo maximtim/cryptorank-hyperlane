@@ -10,6 +10,7 @@ import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol
 
 // возможно стоит переименовать, тк функционал был расширен
 // НЕ поддерживает разные курсы
+// бридж нативного или другого существующего ERC20 токена, ликвидка должна быть на контракте
 contract CryptorankNative is TokenRouter {
     using SafeERC20 for IERC20;
 
