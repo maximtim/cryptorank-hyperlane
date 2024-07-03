@@ -8,26 +8,32 @@ import {TokenMessage} from "../token/libs/TokenMessage.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
+// возможно стоит переименовать, тк функционал был расширен
+// НЕ поддерживает разные курсы
 contract CryptorankNative is TokenRouter {
     using SafeERC20 for IERC20;
 
     struct RouteConfig {
-        uint256 minAmount;
-        uint256 maxAmount;
-        uint256 minCommission;
-        uint256 maxCommission;
-        uint256 stepFirst;
+        // можно посжимать через struct packing
+        uint256 minAmount; // мин. сумма бриджа
+        uint256 maxAmount; // макс. сумма бриджа
+        uint256 minCommission; // мин. комиссия за бридж
+        uint256 maxCommission; // макс. комиссия за бридж
+        uint256 stepFirst; // см. график
         uint256 stepCommission;
         uint256 stepAmount;
+        uint256 decimalsUnitSrc; // 10**decimals токена в этой сети
+        uint256 decimalsUnitDst; // 10**decimals токена в сети назначения
     }
     error NoTokenRoute();
     error AmountTooLow();
-    error AmountTooHigh();
+    error AmountTooHigh(); // можно добавить аргументы
 
     event Deposit(address indexed sender, uint256 amount);
-    event ReferralBridge(string referral, address sender, uint256 amount);
+    event ReferralBridge(string referral, address sender, uint256 amount); // можно добавить tokenSrc и tokenDst
 
-    mapping(address => mapping(uint32 => mapping(address => RouteConfig)))
+    // address(0) = native token
+    mapping(address tokenSrc => mapping(uint32 destChainId => mapping(address tokenDst => RouteConfig)))
         public tokenRoutes;
 
     constructor(address _mailbox) TokenRouter(_mailbox) {}
@@ -47,6 +53,7 @@ contract CryptorankNative is TokenRouter {
             tokenRoutes[_tokensSrc[i]][_destinations[i]][
                 _tokensDst[i]
             ] = _routeConfigs[i];
+            // мб доставать decimals динамически
         }
     }
 
@@ -57,7 +64,7 @@ contract CryptorankNative is TokenRouter {
         bytes32 _recipient,
         uint256 _amount,
         string calldata _referral
-    ) public payable virtual returns (bytes32 messageId) {
+    ) public payable returns (bytes32 messageId) {
         emit ReferralBridge(_referral, msg.sender, _amount);
         return
             _transferRemoteInternal(
@@ -70,6 +77,8 @@ contract CryptorankNative is TokenRouter {
             );
     }
 
+    // оверрайднул эту функцию, чтобы все публичные функции бриджа брали комиссию (в базовой этого нет)
+    // собирался ее убрать. для этого надо убрать эту функцию из TokenRouter, и поправить остальные его контракты-наследники
     function transferRemote(
         uint32 _destination,
         bytes32 _recipient,
@@ -90,6 +99,7 @@ contract CryptorankNative is TokenRouter {
         _transferTo(msg.sender, _amount, _token);
     }
 
+    // функция из абстрактного базового класса, можно ее выпилить, убрав из базового
     function balanceOf(
         address _account
     ) external view override returns (uint256) {
@@ -108,13 +118,13 @@ contract CryptorankNative is TokenRouter {
     }
 
     /**
-     * @dev Sends `_amount` of native token to `_recipient` balance.
+     * @dev Sends `_amount` of token to `_recipient` balance.
      * @inheritdoc TokenRouter
      */
     function _transferTo(
         address _recipient,
         uint256 _amount,
-        bytes calldata metadata
+        bytes calldata metadata // адрес токена хранится здесь
     ) internal virtual override {
         _transferTo(_recipient, _amount, address(uint160(bytes20(metadata))));
     }
@@ -150,19 +160,24 @@ contract CryptorankNative is TokenRouter {
         uint256 _amount,
         uint256 _msgValue
     ) internal returns (bytes32 messageId) {
+        // скопировал в мемори, тк будут использоваться все значения
         RouteConfig memory routeConfig_ = tokenRoutes[_tokenSrc][_destination][
             _tokenDst
         ];
 
-        if (routeConfig_.maxAmount == 0) revert NoTokenRoute();
+        // проверка на существование конфига для данного роута (мб изменить)
+        if (routeConfig_.decimalsUnitSrc == 0) revert NoTokenRoute();
+
+        // возможно стоит добавить больше ограничений
         if (_amount > routeConfig_.maxAmount) revert AmountTooHigh();
         if (_amount < routeConfig_.minAmount) revert AmountTooLow();
 
         uint256 commission_ = _calcCommission(_amount, routeConfig_);
-        uint256 nativeCommission = 0;
+        uint256 nativeCommission_ = 0;
 
+        // комиссию берем с того токена, который бриджится (иначе придется переводить по курсу)
         if (_tokenSrc == address(0)) {
-            nativeCommission = _amount + commission_;
+            nativeCommission_ = _amount + commission_;
         } else {
             IERC20(_tokenSrc).safeTransferFrom(
                 msg.sender,
@@ -173,11 +188,12 @@ contract CryptorankNative is TokenRouter {
 
         messageId = _dispatch(
             _destination,
-            _msgValue - nativeCommission,
+            _msgValue - nativeCommission_,
             TokenMessage.format(
                 _recipient,
-                _amount,
-                abi.encodePacked(_tokenDst)
+                (_amount * routeConfig_.decimalsUnitDst) /
+                    routeConfig_.decimalsUnitSrc, // учитываем разные decimals у токенов
+                abi.encodePacked(_tokenDst) // токен в сети назначения. чтобы не усложнять логику, засунул его в метаданные сообщения
             )
         );
 
@@ -190,6 +206,7 @@ contract CryptorankNative is TokenRouter {
     ) private pure returns (uint256 commission_) {
         if (_amount < _routeConfig.stepFirst) return _routeConfig.minCommission;
 
+        // не хватает проверки на 0, и мб других проверок
         commission_ =
             ((_amount - _routeConfig.stepFirst) / _routeConfig.stepAmount + 1) *
             _routeConfig.stepCommission +
