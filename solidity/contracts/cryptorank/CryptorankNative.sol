@@ -4,7 +4,6 @@ pragma solidity >=0.8.0;
 import {TokenRouter} from "../token/libs/TokenRouter.sol";
 import {Address} from "@openzeppelin/contracts/utils/Address.sol";
 import {TokenMessage} from "../token/libs/TokenMessage.sol";
-import {TypeCasts} from "../libs/TypeCasts.sol";
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -20,7 +19,6 @@ contract CryptorankNative is TokenRouter {
         uint256 stepFirst;
         uint256 stepCommission;
         uint256 stepAmount;
-        uint256 decimalsUnit;
     }
     error NoTokenRoute();
     error AmountTooLow();
@@ -29,7 +27,8 @@ contract CryptorankNative is TokenRouter {
     event Deposit(address indexed sender, uint256 amount);
     event ReferralBridge(string referral, address sender, uint256 amount);
 
-    mapping(address => mapping(uint32 => mapping(address => RouteConfig))) tokenRoutes;
+    mapping(address => mapping(uint32 => mapping(address => RouteConfig)))
+        public tokenRoutes;
 
     constructor(address _mailbox) TokenRouter(_mailbox) {}
 
@@ -155,9 +154,9 @@ contract CryptorankNative is TokenRouter {
             _tokenDst
         ];
 
-        if (routeConfig_.decimalsUnit == 0) revert NoTokenRoute();
-        if (_amount < routeConfig_.minAmount) revert AmountTooLow();
+        if (routeConfig_.maxAmount == 0) revert NoTokenRoute();
         if (_amount > routeConfig_.maxAmount) revert AmountTooHigh();
+        if (_amount < routeConfig_.minAmount) revert AmountTooLow();
 
         uint256 commission_ = _calcCommission(_amount, routeConfig_);
         uint256 nativeCommission = 0;
