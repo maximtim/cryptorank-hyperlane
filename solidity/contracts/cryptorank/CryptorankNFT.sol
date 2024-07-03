@@ -7,6 +7,7 @@ import {IERC721Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC7
 import {ERC721Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import {ERC721EnumerableUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
 
+// бридж искусственного ERC721 токена
 contract CryptorankNFT is ERC721EnumerableUpgradeable, TokenRouter {
     error InsufficientPayment(uint256 fee, uint256 value);
 
@@ -17,6 +18,7 @@ contract CryptorankNFT is ERC721EnumerableUpgradeable, TokenRouter {
     uint256 public fee;
     uint256 public nextMintId;
 
+    // забыл сделать маппинг публичным, поэтому чтобы не передеплоивать, вычислил номер слота, чтобы доставать скриптом
     mapping(uint256 => uint256) visited; // 0x164 = 356
 
     constructor(address _mailbox) TokenRouter(_mailbox) {}
@@ -34,6 +36,9 @@ contract CryptorankNFT is ERC721EnumerableUpgradeable, TokenRouter {
         fee = fee_;
         baseUri = baseURI_;
 
+        // id для одного нфт во всех сетях должен быть одинаковым.
+        // при этом счетчики на разных сетях не должны пересекаться, иначе будут коллизии
+        // для этого на каждой сети свое подмножество айди
         uint256 id = chainId_ * 10 ** 7 + 1;
         nextMintId = id + 1;
         _safeMint(owner_, id);
@@ -61,6 +66,7 @@ contract CryptorankNFT is ERC721EnumerableUpgradeable, TokenRouter {
         uint256 count,
         string calldata referral
     ) external payable {
+        // комиссия * количество нфт
         uint256 totalFee = fee * count;
         if (msg.value < totalFee)
             revert InsufficientPayment(totalFee, msg.value);
@@ -110,6 +116,7 @@ contract CryptorankNFT is ERC721EnumerableUpgradeable, TokenRouter {
         uint256 _amountOrId,
         string calldata _referral
     ) external payable virtual returns (bytes32 messageId) {
+        // для нфт за бридж по тз не было комиссии
         emit ReferralBridge(_referral, msg.sender);
         return
             _transferRemote(
@@ -147,6 +154,7 @@ contract CryptorankNFT is ERC721EnumerableUpgradeable, TokenRouter {
     }
 
     function _safeMint(address to, uint256 tokenId) internal override {
+        // счетчик посещений сети юзером для статы
         visited[tokenId]++;
         super._safeMint(to, tokenId, "");
     }
